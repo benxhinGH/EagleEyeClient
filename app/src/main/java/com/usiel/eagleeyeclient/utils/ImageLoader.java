@@ -1,4 +1,4 @@
-package com.usiel.eagleeyeclient;
+package com.usiel.eagleeyeclient.utils;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
