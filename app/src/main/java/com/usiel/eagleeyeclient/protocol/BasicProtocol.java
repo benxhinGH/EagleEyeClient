@@ -68,9 +68,9 @@ public class BasicProtocol {
 
 	public byte[] getBytes() {
 		if(dataArray != null) {
-			length = 7 + dataArray.length;
+			length = 8 + dataArray.length;
 		}else {
-			length = 7;
+			length = 8;
 		}
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {

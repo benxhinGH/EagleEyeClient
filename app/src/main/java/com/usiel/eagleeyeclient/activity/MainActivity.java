@@ -15,6 +15,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @BindView(R.id.rv_spy)
     RecyclerView rvSpy;
 
+    private Handler handler = new Handler();
 
 
     private SpyAdapter spyAdapter;
@@ -64,32 +66,54 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private ClientCallback clientCallback = new ClientCallback() {
         @Override
         public void spyList(List<Spy> spies) {
-            if(swipeRefreshLayout.isRefreshing()){
-                swipeRefreshLayout.setRefreshing(false);
-            }
-            spyAdapter.updateDatas(spies);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(swipeRefreshLayout.isRefreshing()){
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                    spyAdapter.updateDatas(spies);
+                }
+            });
+
         }
 
         @Override
         public void screenShot(int transactionId, File file) {
-            if(transactionId == screenShotDialog.getTransactionId()){
-                closeProgressDialog();
-                screenShotDialog.setImage(file);
-                Toast.makeText(MainActivity.this, "refresh success", Toast.LENGTH_SHORT).show();
-            }else {
-                Log.e(TAG, "error when take screenshot");
-                Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
-            }
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(transactionId == screenShotDialog.getTransactionId()){
+                        closeProgressDialog();
+                        if(file == null){
+                            Log.e(TAG, "file should not be null!");
+                            return;
+                        }
+                        screenShotDialog.setImage(file);
+                        Toast.makeText(MainActivity.this, "refresh success", Toast.LENGTH_SHORT).show();
+                    }else {
+                        Log.e(TAG, "error when take screenshot");
+                        Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
         }
 
         @Override
         public void screenShotResponse(int transactionId) {
-            if(transactionId == screenShotDialog.getTransactionId()){
-                progressDialog.setMessage("take screenshot...");
-            }else{
-                Log.e(TAG, "error when take screenshot");
-                Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
-            }
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(transactionId == screenShotDialog.getTransactionId()){
+                        progressDialog.setMessage("take screenshot...");
+                    }else{
+                        Log.e(TAG, "error when take screenshot");
+                        Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
         }
     };
 
@@ -125,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
 
-        client = new Client(Config.REMOTE_SERVER_ADDRESS, Config.REMOTE_SERVER_PORT, clientCallback);
+        client = new Client("192.168.1.3", Config.REMOTE_SERVER_PORT, clientCallback);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -135,18 +159,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void showScreenShotDialog(Spy spy){
-        if(screenShotDialog == null){
-            screenShotDialog = new ScreenShotDialog(this);
-            screenShotDialog.setOnClickBtnRefreshListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int transactionId = TransactionIdPool.getInstance().allocate();
-                    screenShotDialog.setTransactionId(transactionId);
-                    client.getScreenShot(transactionId, spy);
-                    showProgressDialog();
-                }
-            });
-        }
+        screenShotDialog = new ScreenShotDialog(this);
+        screenShotDialog.setOnClickBtnRefreshListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int transactionId = TransactionIdPool.getInstance().allocate();
+                screenShotDialog.setTransactionId(transactionId);
+                client.getScreenShot(transactionId, spy);
+                showProgressDialog();
+            }
+        });
         screenShotDialog.show();
     }
 

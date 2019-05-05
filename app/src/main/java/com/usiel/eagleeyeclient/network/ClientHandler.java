@@ -71,6 +71,12 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             case MsgId.SCREENSHOT_RESPONSE:
                 callback.screenShotResponse(transactionId);
                 break;
+            case MsgId.IDENTIFICATION_RESPONSE:
+                if(basicProtocol.getErrorCode() != ErrorCode.SUCCESS){
+                    Log.e(TAG, "identification failure!");
+                    ctx.close();
+                }
+                break;
                 default:
                     Log.e(TAG, "unknown msg");
                     break;

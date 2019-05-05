@@ -53,4 +53,5 @@ public class ScreenShotDialog extends AlertDialog.Builder {
     public void setTransactionId(int transactionId){
         this.transactionId = transactionId;
     }
+
 }

@@ -6,6 +6,10 @@ public class Spy{
     private int port;
     private String hostname;
 
+    public Spy(){
+
+    }
+
     public Spy(String ip, int port, String hostname) {
         this.ip = ip;
         this.port = port;

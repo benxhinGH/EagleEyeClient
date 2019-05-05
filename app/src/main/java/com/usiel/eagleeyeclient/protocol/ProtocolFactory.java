@@ -29,6 +29,7 @@ public class ProtocolFactory {
         BasicProtocol basicProtocol = new BasicProtocol();
         basicProtocol.setTransactionId((byte)transactionId);
         basicProtocol.setMsgId(MsgId.SCREENSHOT_REQUEST);
+        basicProtocol.setDataFormat(DataFormat.JSON);
         String jsonStr = JSONObject.toJSONString(spy);
         basicProtocol.setDataArray(jsonStr.getBytes());
         return basicProtocol;
