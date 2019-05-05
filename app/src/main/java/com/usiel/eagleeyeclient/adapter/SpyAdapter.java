@@ -31,6 +31,10 @@ public class SpyAdapter extends RecyclerView.Adapter<SpyAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    public List<Spy> getDatas(){
+        return datas;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
