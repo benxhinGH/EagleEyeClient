@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         Log.e(TAG, "error when take screenshot");
                         Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
                     }
+                    TransactionIdPool.getInstance().release(transactionId);
                 }
             });
 
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
 
-        client = new Client("192.168.1.3", Config.REMOTE_SERVER_PORT, clientCallback);
+        client = new Client(Config.LOCAL_SERVER_ADDRESS, Config.REMOTE_SERVER_PORT, clientCallback);
         new Thread(new Runnable() {
             @Override
             public void run() {

@@ -5,4 +5,5 @@ public class Config {
     public static final int REMOTE_SERVER_PORT = 19961;
     public static final String DEFAULT_IMAGE_FORMAT = "png";
     public static String fileSaveDir = Util.getCurrentWorkDir();
+    public static final String LOCAL_SERVER_ADDRESS = "192.168.1.4";
 }

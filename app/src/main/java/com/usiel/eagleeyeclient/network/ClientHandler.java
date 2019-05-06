@@ -42,6 +42,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BasicProtocol basicProtocol = (BasicProtocol) msg;
         int transactionId = basicProtocol.getTransactionId();
+        Log.i(TAG, "receive msg:" + basicProtocol.toString());
         switch (basicProtocol.getMsgId()){
             case MsgId.SPY_LIST_RESPONSE:
                 List<Spy> spyList = Parser.parseSpyListResponse(basicProtocol);
